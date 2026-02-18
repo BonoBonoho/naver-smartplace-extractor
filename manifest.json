@@ -3,6 +3,7 @@
   "name": "Formula X",
   "version": "4.9.1",
   "description": "Formula X - 플레이스 통계 추출 및 매출 관리 대시보드",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAstJCh8CnhDYZhfPO/NwKnsPs4uOZbpl1+Lh7rRAEA6smeSrAXtU1XgTvjdSWoQ3APeH36SZDHcLjDTtRnmz5HjxwPzHZoSMdAfI5EKmyZ1BVm7VEfUvDJPl6VtPF74+lr7K+uL4peeMPSE8vSvQOu2KQ6JINRcDV7CRujUdtw8YlBSE6gqJSkKDfXAoWR8Epn4vGobVaq9CgxRZgDRC+g04dw0stZm+Y5QV7OkWRT72rgJSYMLHfO2UCRZftgwd1LZotLdCdRhfzOOS2o0ijVWFfocH/zzVb4KDeu5A6uUitWbeWfbGQ11HvwGdyEmS75XFsdSr+9/XMfcNItQT1fQIDAQAB",
   "permissions": ["activeTab", "scripting", "storage", "identity", "tabs"],
   "host_permissions": [
     "*://*.smartplace.naver.com/*",
