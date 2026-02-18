@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Formula X",
+  "version": "4.9.1",
+  "description": "Formula X - 플레이스 통계 추출 및 매출 관리 대시보드",
+  "permissions": ["activeTab", "scripting", "storage", "identity", "tabs"],
+  "host_permissions": [
+    "*://*.smartplace.naver.com/*",
+    "*://*.naver.com/*",
+    "https://*.supabase.co/*",
+    "https://*.chromiumapp.org/*"
+  ],
+  "action": { "default_popup": "popup.html" },
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    { "matches": ["*://*.smartplace.naver.com/*"], "js": ["extractor.js"], "css": ["content.css"] }
+  ]
+}

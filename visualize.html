@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>스마트플레이스 통계 시각화</title>
+  <script src="xlsx-writer.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      padding: 24px;
+      min-height: 100vh;
+    }
+    .header {
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+    .header p { font-size: 14px; color: #64748b; }
+    .controls {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .controls button {
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #03c75a;
+      color: #fff;
+    }
+    .controls button.secondary {
+      background: #fff;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+    }
+    .controls button:hover { filter: brightness(1.05); }
+    
+    .data-table {
+      background: #fff;
+      border-radius: 12px;
+      overflow: auto;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      margin-top: 24px;
+      min-height: 200px;
+    }
+    .data-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .data-table th, .data-table td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .data-table th:nth-child(n+2), .data-table td:nth-child(n+2) { text-align: center; }
+    .data-table th {
+      background: #f1f5f9;
+      font-weight: 700;
+      color: #334155;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+    .bar-cell {
+      position: relative;
+      min-width: 60px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+    }
+    .bar-fill {
+      position: absolute;
+      left: 0;
+      top: 2px;
+      bottom: 2px;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+    .bar-value {
+      position: relative;
+      z-index: 1;
+      font-weight: 700;
+      font-size: 13px;
+      color: #1e293b;
+    }
+    .table-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; color: #1e293b; padding: 0 16px; padding-top: 16px; }
+    .data-table .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: #fef3c7;
+      border-radius: 999px;
+      font-weight: 500;
+      color: #92400e;
+    }
+    .data-count { font-size: 12px; color: #64748b; margin-left: 8px; }
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>📊 스마트플레이스 통계 시각화</h1>
+    <p>추출된 데이터를 차트와 표로 확인할 수 있습니다</p>
+  </div>
+
+  <div class="controls">
+    <button id="btn-export-xlsx">📥 Excel 다운로드 (.xlsx)</button>
+    <span id="data-count" class="data-count" style="display:none;"></span>
+  </div>
+
+  <div id="table-area" class="data-table"></div>
+
+  <div id="place-channel-section" class="data-table" style="display:none; margin-top:32px;"></div>
+  <div id="place-keyword-section" class="data-table" style="display:none; margin-top:32px;"></div>
+
+  <div id="empty-state" class="empty-state" style="display: none;">
+    데이터가 없습니다. 스마트플레이스 통계 페이지에서 추출을 실행한 후 시각화를 다시 열어주세요.
+  </div>
+
+  <script src="visualize.js"></script>
+</body>
+</html>

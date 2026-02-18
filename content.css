@@ -1,0 +1,52 @@
+.nsp-extractor-button {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 2147483647;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #03c75a 0%, #02a84e 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(3, 199, 90, 0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.nsp-extractor-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(3, 199, 90, 0.5);
+}
+
+.nsp-extractor-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.nsp-notification {
+  position: fixed;
+  bottom: 80px;
+  right: 24px;
+  z-index: 2147483647;
+  padding: 12px 20px;
+  font-size: 14px;
+  color: #333;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  animation: nsp-fade-in 0.3s ease;
+}
+
+@keyframes nsp-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

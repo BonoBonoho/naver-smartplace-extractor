@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formula X</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+
+    /* ===== 네비게이션 ===== */
+    .top-nav {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      border-bottom: 1px solid #334155;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .brand {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-right: 40px;
+      background: linear-gradient(135deg, #03c75a, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-tabs { display: flex; gap: 4px; height: 100%; }
+    .nav-tab {
+      background: none; border: none; color: #94a3b8;
+      font-size: 14px; font-weight: 600; padding: 0 20px;
+      cursor: pointer; height: 100%; display: flex; align-items: center;
+      border-bottom: 3px solid transparent; transition: all 0.2s;
+    }
+    .nav-tab:hover { color: #e2e8f0; background: rgba(255,255,255,0.04); }
+    .nav-tab.active { color: #03c75a; border-bottom-color: #03c75a; background: rgba(3,199,90,0.06); }
+
+    /* ===== 메인 콘텐츠 ===== */
+    .main-content { background: #f8fafc; color: #1e293b; min-height: calc(100vh - 60px); padding: 28px 32px; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ===== 공통 ===== */
+    .section-card {
+      background: #fff; border-radius: 12px; overflow: auto;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 24px;
+    }
+    .section-card table { width: 100%; border-collapse: collapse; }
+    .section-card th, .section-card td {
+      padding: 10px 14px; text-align: left; border-bottom: 1px solid #e2e8f0;
+      font-size: 13px; white-space: nowrap;
+    }
+    .section-card th:nth-child(n+2), .section-card td:nth-child(n+2) { text-align: right; }
+    .section-card th {
+      background: #f1f5f9; font-weight: 700; color: #334155;
+      font-size: 12px; letter-spacing: 0.02em; position: sticky; top: 0;
+    }
+    .table-title { font-size: 16px; font-weight: 700; margin-bottom: 0; color: #1e293b; padding: 16px 16px 12px; }
+
+    /* ===== 바 셀 ===== */
+    .bar-cell { position: relative; min-width: 60px; height: 28px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; }
+    .bar-fill { position: absolute; left: 0; top: 2px; bottom: 2px; border-radius: 4px; transition: width 0.3s ease; }
+    .bar-value { position: relative; z-index: 1; font-weight: 700; font-size: 13px; color: #1e293b; }
+
+    /* ===== 컨트롤 ===== */
+    .controls-bar { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; align-items: center; }
+    .btn { padding: 10px 18px; font-size: 14px; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; transition: filter 0.15s; }
+    .btn:hover { filter: brightness(1.05); }
+    .btn-primary { background: #03c75a; color: #fff; }
+    .btn-secondary { background: #fff; color: #475569; border: 1px solid #e2e8f0; }
+    .badge-count { font-size: 12px; color: #64748b; }
+    #place-empty, .sales-empty { text-align: center; padding: 48px 24px; color: #94a3b8; }
+
+    /* ===== 매출 대시보드 전용 ===== */
+    .upload-zone {
+      border: 2px dashed #cbd5e1; border-radius: 16px; padding: 48px 24px;
+      text-align: center; background: #fff; cursor: pointer; transition: all 0.2s; margin-bottom: 24px;
+    }
+    .upload-zone:hover, .upload-zone.dragover { border-color: #03c75a; background: rgba(3,199,90,0.04); }
+    .upload-zone .icon { font-size: 48px; margin-bottom: 12px; }
+    .upload-zone h3 { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 8px; }
+    .upload-zone p { font-size: 14px; color: #64748b; margin-bottom: 16px; }
+    .upload-zone input[type="file"] { display: none; }
+    .upload-btns { display: flex; gap: 12px; justify-content: center; }
+    .upload-btns .btn { padding: 10px 24px; font-size: 15px; cursor: pointer; }
+
+    .file-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    .file-chip {
+      display: flex; align-items: center; gap: 6px; background: #f1f5f9;
+      border-radius: 20px; padding: 6px 14px; font-size: 12px; color: #475569; font-weight: 500;
+    }
+    .file-chip .rows-count { color: #03c75a; font-weight: 700; }
+
+    /* 필터 바 */
+    .filter-bar {
+      display: flex; gap: 12px; margin-bottom: 20px; align-items: center; flex-wrap: wrap;
+      padding: 12px 16px; background: #fff; border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .filter-bar label { font-size: 13px; font-weight: 600; color: #475569; }
+    .filter-bar select {
+      padding: 6px 12px; font-size: 13px; border: 1px solid #e2e8f0;
+      border-radius: 6px; background: #fff; color: #1e293b; cursor: pointer;
+    }
+    .filter-bar .sep { width: 1px; height: 24px; background: #e2e8f0; }
+
+    /* PT / FC / 신규 / 재등록 색상 */
+    .c-pt { color: #e87040; font-weight: 700; }
+    .c-fc { color: #3b82f6; font-weight: 700; }
+    .c-total { color: #1e293b; font-weight: 700; }
+    .c-member { color: #22c55e; font-weight: 700; }
+    .c-new { color: #22c55e; font-weight: 700; }
+    .c-re { color: #a855f7; font-weight: 700; }
+    .bg-pt { background: rgba(232,112,64,0.2); }
+    .bg-fc { background: rgba(59,130,246,0.2); }
+
+    /* 비중 바 (두 색 나란히) */
+    .ratio-bar {
+      display: flex; height: 22px; border-radius: 4px; overflow: hidden;
+      background: #f1f5f9; min-width: 100px;
+    }
+    .ratio-bar .pt-part { background: rgba(232,112,64,0.65); }
+    .ratio-bar .fc-part { background: rgba(59,130,246,0.55); }
+    .ratio-bar .new-part { background: rgba(34,197,94,0.65); }
+    .ratio-bar .re-part { background: rgba(168,85,247,0.60); }
+    .ratio-cell { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+    .ratio-pct { font-size: 12px; font-weight: 700; min-width: 42px; text-align: right; }
+    .reg-badge { font-size: 11px; font-weight: 600; margin-left: 4px; }
+
+    /* 합계 행 */
+    .row-total td { font-weight: 800 !important; background: #fefce8 !important; border-top: 2px solid #e2e8f0; }
+
+    /* 인사이트 */
+    .insights-card {
+      background: linear-gradient(135deg, #1e293b, #334155);
+      color: #e2e8f0; border-radius: 12px; padding: 24px;
+      margin-top: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .insights-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: #22d3ee; }
+    .insight-item { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 14px; line-height: 1.6; }
+    .insight-item:last-child { border-bottom: none; }
+    .insight-item .tag {
+      display: inline-block; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 700; margin-right: 8px;
+    }
+    .tag-up { background: rgba(34,197,94,0.2); color: #22c55e; }
+    .tag-down { background: rgba(239,68,68,0.2); color: #ef4444; }
+    .tag-info { background: rgba(59,130,246,0.2); color: #60a5fa; }
+    .tag-warn { background: rgba(245,158,11,0.2); color: #f59e0b; }
+
+    /* 범례 */
+    .legend { display: flex; gap: 16px; justify-content: flex-end; padding: 8px 16px; font-size: 12px; color: #64748b; }
+    .legend-item { display: flex; align-items: center; gap: 4px; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+    /* ===== 종합 대시보드 ===== */
+    .kpi-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px; margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: #fff; border-radius: 12px; padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08); position: relative; overflow: hidden;
+    }
+    .kpi-card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    }
+    .kpi-card.kpi-green::before { background: #03c75a; }
+    .kpi-card.kpi-blue::before { background: #3b82f6; }
+    .kpi-card.kpi-orange::before { background: #e87040; }
+    .kpi-card.kpi-purple::before { background: #a855f7; }
+    .kpi-card.kpi-cyan::before { background: #22d3ee; }
+    .kpi-card.kpi-rose::before { background: #f43f5e; }
+    .kpi-label { font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.03em; }
+    .kpi-value { font-size: 26px; font-weight: 800; color: #1e293b; line-height: 1.2; }
+    .kpi-sub { font-size: 12px; color: #94a3b8; margin-top: 6px; }
+    .kpi-change { font-size: 12px; font-weight: 700; margin-top: 4px; }
+    .kpi-change.up { color: #22c55e; }
+    .kpi-change.down { color: #ef4444; }
+    .kpi-change.neutral { color: #94a3b8; }
+
+    /* 퍼널 */
+    .funnel-card {
+      background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .funnel-card h3 { font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 20px; }
+
+    /* 2-column layout: funnel left + sales right */
+    .funnel-layout { display: flex; gap: 32px; flex-wrap: wrap; align-items: flex-start; }
+    .funnel-left { flex: 1; min-width: 300px; }
+    .funnel-right { flex: 1; min-width: 260px; border-left: 1px solid #e2e8f0; padding-left: 32px; }
+
+    /* Vertical funnel (깔때기) */
+    .vfunnel { display: flex; flex-direction: column; align-items: center; gap: 0; }
+    .vfunnel-step { display: flex; align-items: center; width: 100%; position: relative; }
+    .vfunnel-bar {
+      height: 56px; border-radius: 8px; display: flex; align-items: center;
+      justify-content: center; margin: 0 auto; transition: width 0.4s ease;
+      position: relative; overflow: visible;
+    }
+    .vfunnel-bar-inner {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 1; position: relative; width: 100%;
+    }
+    .vfunnel-bar .vf-label { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.85); letter-spacing: 0.04em; }
+    .vfunnel-bar .vf-value { font-size: 20px; font-weight: 800; color: #fff; line-height: 1.2; }
+    .vfunnel-bar .vf-sub { font-size: 10px; color: rgba(255,255,255,0.7); }
+    .vfunnel-arrow {
+      display: flex; flex-direction: column; align-items: center; padding: 2px 0;
+      position: relative; z-index: 2;
+    }
+    .vfunnel-arrow .vfa-line { width: 2px; height: 8px; background: #cbd5e1; }
+    .vfunnel-arrow .vfa-badge {
+      font-size: 11px; font-weight: 800; padding: 2px 10px; border-radius: 12px;
+      white-space: nowrap;
+    }
+    .vfa-badge.good { background: rgba(34,197,94,0.12); color: #16a34a; }
+    .vfa-badge.warn { background: rgba(245,158,11,0.12); color: #d97706; }
+    .vfa-badge.bad { background: rgba(239,68,68,0.12); color: #dc2626; }
+
+    /* Sales side cards */
+    .sales-side-card {
+      background: #f8fafc; border-radius: 10px; padding: 18px; margin-bottom: 12px;
+      border: 1px solid #e2e8f0;
+    }
+    .sales-side-card .ss-label { font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 4px; text-transform: uppercase; }
+    .sales-side-card .ss-value { font-size: 22px; font-weight: 800; color: #1e293b; }
+    .sales-side-card .ss-sub { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+
+    /* Legacy horizontal funnel (keep for backward compat) */
+    .funnel-flow {
+      display: flex; align-items: center; justify-content: center; gap: 0;
+      flex-wrap: wrap; padding: 8px 0;
+    }
+    .funnel-step {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 16px 20px; min-width: 130px; position: relative;
+    }
+    .funnel-step .f-icon { font-size: 28px; margin-bottom: 6px; }
+    .funnel-step .f-label { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .funnel-step .f-value { font-size: 22px; font-weight: 800; color: #1e293b; }
+    .funnel-step .f-sub { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+    .funnel-arrow {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 0 6px; color: #94a3b8; min-width: 80px;
+    }
+    .funnel-arrow .fa-icon { font-size: 22px; color: #cbd5e1; }
+    .funnel-arrow .fa-rate {
+      font-size: 13px; font-weight: 800; padding: 3px 10px; border-radius: 20px;
+      margin-top: 2px;
+    }
+    .fa-rate.good { background: rgba(34,197,94,0.12); color: #16a34a; }
+    .fa-rate.warn { background: rgba(245,158,11,0.12); color: #d97706; }
+    .fa-rate.bad { background: rgba(239,68,68,0.12); color: #dc2626; }
+    .funnel-bar-row {
+      display: flex; height: 32px; border-radius: 6px; overflow: hidden;
+      background: #f1f5f9; margin-top: 16px;
+    }
+    .funnel-bar-row > div {
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: #fff; min-width: 40px;
+      transition: width 0.4s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="top-nav">
+    <div class="brand">Formula X</div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-tab="overview">종합 대시보드</button>
+      <button class="nav-tab" data-tab="place">플레이스 대시보드</button>
+      <button class="nav-tab" data-tab="sales">매출 관리 대시보드</button>
+    </div>
+  </nav>
+
+  <div class="main-content">
+
+    <!-- ===== 종합 대시보드 ===== -->
+    <div id="tab-overview" class="tab-panel active">
+      <div id="overview-filter" class="filter-bar" style="display:none;">
+        <label>📍 플레이스 연결 지점</label>
+        <select id="sel-overview-branch"><option value="__all__">전체 통합</option></select>
+        <span id="overview-branch-hint" style="font-size:12px;color:#94a3b8;margin-left:8px;"></span>
+      </div>
+      <div class="kpi-grid" id="overview-kpi"></div>
+      <div id="overview-funnel"></div>
+      <div class="section-card" id="overview-timeline"></div>
+      <div id="overview-insights"></div>
+      <div id="overview-empty" class="sales-empty" style="display:none;">
+        플레이스 데이터를 추출하거나 매출 파일을 업로드하면 종합 분석이 표시됩니다.
+      </div>
+    </div>
+
+    <!-- ===== 플레이스 대시보드 ===== -->
+    <div id="tab-place" class="tab-panel">
+      <div class="controls-bar">
+        <button id="btn-place-xlsx" class="btn btn-primary">📥 Excel 다운로드 (.xlsx)</button>
+        <span id="place-count" class="badge-count"></span>
+      </div>
+      <div id="place-report" class="section-card"></div>
+      <div id="place-channel" class="section-card" style="display:none;"></div>
+      <div id="place-keyword" class="section-card" style="display:none;"></div>
+      <div id="place-kw-classify" class="section-card" style="display:none;"></div>
+      <div id="place-insights"></div>
+      <div id="place-empty" style="display:none;">
+        데이터가 없습니다. 스마트플레이스 통계 페이지에서 추출을 실행한 후 다시 열어주세요.
+      </div>
+    </div>
+
+    <!-- ===== 매출 관리 대시보드 ===== -->
+    <div id="tab-sales" class="tab-panel">
+      <div class="upload-zone" id="sales-upload">
+        <div class="icon">📂</div>
+        <h3>매출 엑셀 파일을 업로드하세요</h3>
+        <p>xlsx, csv 파일을 드래그하거나 클릭하세요 (여러 파일 가능)</p>
+        <div class="upload-btns">
+          <button class="btn btn-primary" id="btn-upload-files">📄 파일 선택</button>
+          <button class="btn btn-secondary" id="btn-upload-folder">📁 폴더 선택</button>
+        </div>
+        <input type="file" id="sales-file-input" multiple accept=".xlsx,.csv,.xls" style="display:none">
+        <input type="file" id="sales-folder-input" webkitdirectory accept=".xlsx,.csv,.xls" style="display:none">
+      </div>
+
+      <div id="sales-file-list" class="file-list"></div>
+
+      <div id="sales-filter" class="filter-bar" style="display:none;">
+        <label>지점</label>
+        <select id="sel-branch"><option value="__all__">전체 통합</option></select>
+        <div class="sep"></div>
+        <label>기간</label>
+        <select id="sel-period">
+          <option value="weekly">주차별</option>
+          <option value="monthly">월별</option>
+        </select>
+        <div class="sep"></div>
+        <button id="btn-sales-xlsx" class="btn btn-primary" style="margin-left:auto;">📥 Excel 다운로드</button>
+        <button id="btn-sales-clear" class="btn btn-secondary">🗑 초기화</button>
+      </div>
+
+      <div id="sales-table-area"></div>
+      <div id="sales-insights"></div>
+    </div>
+
+  </div>
+
+  <script src="xlsx-writer.js"></script>
+  <script src="xlsx-reader.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

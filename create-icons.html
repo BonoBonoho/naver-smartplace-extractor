@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>아이콘 생성</title></head>
+<body>
+  <h2>아이콘 생성</h2>
+  <p>아래 버튼을 클릭하면 icons 폴더에 저장할 아이콘 파일들이 다운로드됩니다. 다운로드 후 icons 폴더에 넣어주세요.</p>
+  <button id="create">아이콘 다운로드 (16, 48, 128)</button>
+  <script>
+    function drawIcon(size) {
+      const c = document.createElement('canvas');
+      c.width = c.height = size;
+      const ctx = c.getContext('2d');
+      const g = ctx.createLinearGradient(0, 0, size, size);
+      g.addColorStop(0, '#03c75a');
+      g.addColorStop(1, '#02a84e');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.roundRect(2, 2, size - 4, size - 4, 4);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      const pad = size * 0.2, w = size * 0.15, gap = size * 0.1;
+      [0.8, 0.5, 0.6, 0.9].forEach((h, i) => {
+        ctx.fillRect(pad + i * (w + gap), size - pad - size * 0.5 * h, w, size * 0.5 * h);
+      });
+      return c.toDataURL('image/png');
+    }
+    document.getElementById('create').onclick = () => {
+      [16, 48, 128].forEach((s) => {
+        const a = document.createElement('a');
+        a.href = drawIcon(s);
+        a.download = `icon${s}.png`;
+        a.click();
+      });
+    };
+  </script>
+</body>
+</html>

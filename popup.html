@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>스마트플레이스 통계 추출기</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Formula X</h1>
+      <p class="subtitle">스마트플레이스 관리자 페이지에서 추출 버튼을 클릭하세요</p>
+    </header>
+
+    <section class="actions">
+      <button id="btn-extract" class="btn btn-primary">데이터 추출 (페이지에서 실행)</button>
+      <button id="btn-export-xlsx" class="btn btn-secondary" disabled>📥 Excel 다운로드</button>
+      <button id="btn-visualize" class="btn btn-secondary" disabled>Formula X 대시보드</button>
+    </section>
+
+    <section class="cloud-section" id="cloud-section">
+      <h2>☁️ 클라우드 동기화</h2>
+      <div id="cloud-login-box" class="cloud-box">
+        <input type="email" id="cloud-email" placeholder="이메일" class="cloud-input">
+        <input type="password" id="cloud-password" placeholder="비밀번호" class="cloud-input">
+        <button id="btn-cloud-login" class="btn btn-primary" style="width:100%;margin-top:6px;">로그인</button>
+        <p class="cloud-divider" style="text-align:center;margin:10px 0 6px;font-size:11px;color:#94a3b8;">또는</p>
+        <button type="button" id="btn-cloud-google-login" class="btn btn-google" style="width:100%;padding:8px 12px;font-size:13px;background:#fff;color:#374151;border:1px solid #d1d5db;border-radius:6px;cursor:pointer;">Google로 계속하기</button>
+        <p id="cloud-login-error" class="cloud-error"></p>
+      </div>
+      <div id="cloud-logged-box" class="cloud-box" style="display:none;">
+        <p id="cloud-login-success-msg" style="margin:0 0 8px 0;font-size:13px;font-weight:600;color:#16a34a;">✓ 로그인 성공</p>
+        <p class="cloud-status"><span id="cloud-user-name"></span> · <span id="cloud-brand-name"></span></p>
+        <label class="cloud-label">업로드할 지점</label>
+        <select id="cloud-branch-select" class="cloud-select"></select>
+        <button id="btn-cloud-sync" class="btn btn-primary" style="width:100%;margin-top:8px;">클라우드에 업로드</button>
+        <button id="btn-cloud-logout" class="btn btn-outline" style="width:100%;margin-top:4px;font-size:11px;">로그아웃</button>
+        <p id="cloud-sync-status" class="cloud-status" style="margin-top:6px;font-size:11px;color:#64748b;"></p>
+      </div>
+    </section>
+
+    <section class="period-filter" id="period-section" style="display: none;">
+      <label>기간별 보기:</label>
+      <select id="period-select">
+        <option value="all">전체</option>
+        <option value="주별">주별</option>
+        <option value="월별">월별</option>
+      </select>
+      <select id="history-select">
+        <option value="latest">최신 추출</option>
+      </select>
+    </section>
+
+    <section class="data-preview">
+      <h2>📋 리포트 <span id="period-badge"></span><button type="button" id="btn-refresh-report" class="btn btn-outline" style="margin-left:8px;padding:2px 8px;font-size:11px;">🔄 다시 불러오기</button></h2>
+      <div id="preview-container" class="preview-container">
+        <p id="empty-message" class="empty-message">아직 데이터가 없습니다.<br>페이지에서 "📊 통계 추출" 버튼을 클릭하세요.</p>
+        <div id="table-wrapper" class="table-wrapper" style="display: none;"></div>
+      </div>
+    </section>
+
+    <section class="data-preview" id="place-section" style="display: none;">
+      <h2>📍 플레이스 유입 채널</h2>
+      <div id="place-channel-wrapper" class="table-wrapper"></div>
+      <h2 style="margin-top:12px;">🔍 플레이스 유입 키워드</h2>
+      <div id="place-keyword-wrapper" class="table-wrapper"></div>
+    </section>
+
+    <footer>
+      <button id="btn-clear" class="btn btn-danger" style="font-size:11px;padding:4px 10px;background:#ef4444;color:#fff;border:none;border-radius:4px;cursor:pointer;margin-bottom:6px;">🗑 데이터 초기화</button>
+      <br><small>네이버 스마트플레이스 관리자 통계 페이지에서만 사용 가능합니다.</small>
+    </footer>
+  </div>
+  <script src="cloud-config.js"></script>
+  <script src="cloud-api.js"></script>
+  <script src="xlsx-writer.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
