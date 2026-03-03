@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formula X</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=20260216zk">
+</head>
+<body>
+
+<!-- ===== Navigation ===== -->
+<nav class="main-nav" id="main-nav">
+  <div class="nav-left">
+    <span class="nav-logo">Formula X</span>
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-tab="overview">종합</button>
+      <button class="nav-tab" data-tab="place">플레이스</button>
+      <button class="nav-tab" data-tab="sales">매출</button>
+      <button class="nav-tab" data-tab="sales_target">목표 매출</button>
+      <button class="nav-tab" data-tab="goal_achievement">목표 달성율</button>
+      <button class="nav-tab" data-tab="activity">활동 실적</button>
+      <button class="nav-tab" data-tab="profit">수익률</button>
+      <button class="nav-tab" data-tab="expenses">지출</button>
+      <button class="nav-tab" data-tab="refunds">환불</button>
+      <button class="nav-tab" data-tab="settings" data-role="brand,super">설정</button>
+      <button class="nav-tab" data-tab="admin" data-role="super">관리자</button>
+    </div>
+  </div>
+  <div id="bemove-trainer-header-goal" class="nav-center bemove-trainer-header-goal" style="display:none"></div>
+  <div class="nav-right">
+    <div class="nav-right-row nav-right-main" id="nav-right-main">
+      <span id="nav-brand-name"></span>
+      <span id="nav-role-badge" class="role-badge"></span>
+      <span id="nav-duty-badge" class="role-badge role-duty" style="display:none"></span>
+      <span id="nav-user-name"></span>
+      <button class="btn btn-outline btn-sm" id="btn-logout">로그아웃</button>
+    </div>
+    <div class="nav-right-row nav-right-mode" id="nav-right-mode"></div>
+  </div>
+</nav>
+
+<!-- ===== Login Page ===== -->
+<div class="page" id="page-login" style="display:block;">
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <h1>Formula X</h1>
+        <p>헬스장 통합 데이터 분석 플랫폼</p>
+      </div>
+      <div class="role-select-intro" id="role-select-intro">
+        <p class="role-select-label">역할을 선택해주세요</p>
+        <div class="role-select-cards">
+          <button type="button" class="role-card" data-role="super" title="슈퍼 관리자">
+            <span class="role-card-icon">⚙️</span>
+            <span class="role-card-title">슈퍼 관리자</span>
+            <span class="role-card-desc">전체 시스템 관리</span>
+          </button>
+          <button type="button" class="role-card" data-role="branch" title="지점장">
+            <span class="role-card-icon">🏢</span>
+            <span class="role-card-title">지점장</span>
+            <span class="role-card-desc">지점 관리 및 운영</span>
+          </button>
+          <button type="button" class="role-card" data-role="trainer" title="트레이너">
+            <span class="role-card-icon">💪</span>
+            <span class="role-card-title">트레이너</span>
+            <span class="role-card-desc">회원 관리 및 트레이닝</span>
+          </button>
+          <button type="button" class="role-card" data-role="member" title="회원">
+            <span class="role-card-icon">❤️</span>
+            <span class="role-card-title">회원</span>
+            <span class="role-card-desc">운동 및 건강 관리</span>
+          </button>
+        </div>
+        <p class="role-select-hint text-muted">선택한 역할로 로그인하거나 가입할 수 있습니다.</p>
+      </div>
+      <form id="form-login">
+        <div class="form-group">
+          <label>이메일</label>
+          <input type="email" id="login-email" placeholder="email@example.com" required>
+        </div>
+        <div class="form-group">
+          <label>비밀번호</label>
+          <input type="password" id="login-password" placeholder="비밀번호 입력" required>
+        </div>
+        <div class="auth-error" id="login-error"></div>
+        <button type="submit" class="btn btn-primary">로그인</button>
+        <div class="auth-divider"><span>또는</span></div>
+        <button type="button" class="btn btn-google" id="btn-google-login">Google로 계속하기</button>
+      </form>
+      <div class="auth-link">
+        계정이 없으신가요? <a href="#" id="link-to-signup">무료로 시작하기</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Signup Page ===== -->
+<div class="page" id="page-signup">
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <h1>Formula X</h1>
+        <p>무료로 시작하세요 — 모든 기능을 제한 없이 사용할 수 있습니다</p>
+      </div>
+      <form id="form-signup">
+        <div class="form-group">
+          <label>요청 권한 (슈퍼관리자 승인 필요)</label>
+          <div class="signup-type-options">
+            <label class="signup-type-option">
+              <input type="radio" name="signup-type" value="brand" checked>
+              <span>브랜드 관리자</span>
+              <small class="text-muted">브랜드를 생성하고 지점·매출·지출을 통합 관리합니다</small>
+            </label>
+            <label class="signup-type-option">
+              <input type="radio" name="signup-type" value="branch">
+              <span>브랜드 지점장</span>
+              <small class="text-muted">지점 매출·지출 데이터를 입력·조회합니다</small>
+            </label>
+            <label class="signup-type-option">
+              <input type="radio" name="signup-type" value="brand_accounting">
+              <span>브랜드 회계</span>
+              <small class="text-muted">브랜드 지출·수익률 조회 및 결의 이체 처리</small>
+            </label>
+            <label class="signup-type-option">
+              <input type="radio" name="signup-type" value="trainer">
+              <span>트레이너</span>
+              <small class="text-muted">Bemove 모드에서 OT/스케줄/재등록 관련 기능을 사용합니다</small>
+            </label>
+            <label class="signup-type-option">
+              <input type="radio" name="signup-type" value="member">
+              <span>회원</span>
+              <small class="text-muted">Bemove 모드에서 회원 관점 기능을 사용합니다</small>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>이름</label>
+          <input type="text" id="signup-name" placeholder="홍길동" required>
+        </div>
+        <div class="form-group">
+          <label>이메일</label>
+          <input type="email" id="signup-email" placeholder="email@example.com" required>
+        </div>
+        <div class="form-group">
+          <label>비밀번호</label>
+          <input type="password" id="signup-password" placeholder="6자 이상" required minlength="6">
+        </div>
+        <div class="form-group">
+          <label>비밀번호 확인</label>
+          <input type="password" id="signup-password-confirm" placeholder="비밀번호 재입력" required>
+        </div>
+        <div class="auth-error" id="signup-error"></div>
+        <button type="submit" class="btn btn-primary">무료로 시작하기</button>
+        <div class="auth-divider"><span>또는</span></div>
+        <button type="button" class="btn btn-google" id="btn-google-signup">Google로 시작하기</button>
+      </form>
+      <div class="auth-link">
+        이미 계정이 있으신가요? <a href="#" id="link-to-login">로그인</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Verify Email Page ===== -->
+<div class="page" id="page-verify-email">
+  <div class="auth-container">
+    <div class="auth-card verify-card">
+      <div class="icon">📧</div>
+      <h2>이메일 인증을 확인하세요</h2>
+      <p>
+        <strong id="verify-email-addr"></strong>으로 인증 메일을 보냈습니다.<br>
+        메일함을 확인하고 인증 링크를 클릭해주세요.
+      </p>
+      <div class="mt-4">
+        <a href="#" id="link-to-login" class="btn btn-outline">로그인으로 돌아가기</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Onboarding (Brand Setup / Accounting Wait) ===== -->
+<div class="page" id="page-onboarding">
+  <div class="auth-container">
+    <!-- 브랜드 관리자: 브랜드 생성 폼 -->
+    <div class="auth-card onboard-card" id="onboarding-brand-block" style="display:none;">
+      <div class="auth-logo">
+        <h1>브랜드 설정</h1>
+        <p>시작하기 전에 브랜드 정보를 입력해주세요</p>
+      </div>
+      <form id="form-onboarding">
+        <div class="form-group">
+          <label>브랜드명</label>
+          <input type="text" id="onboard-brand-name" placeholder="예: 비무브짐" required>
+        </div>
+        <div class="form-group">
+          <label>브랜드 키워드 (쉼표 구분)</label>
+          <input type="text" id="onboard-brand-keywords" placeholder="예: 비무브, 비무브짐, bemove">
+          <div class="form-hint">검색 키워드에서 브랜드를 자동 분류하는 데 사용됩니다.</div>
+        </div>
+        <div class="form-group">
+          <label>쿠폰 코드 (선택)</label>
+          <input type="text" id="onboard-coupon" placeholder="쿠폰 코드 입력">
+          <div class="form-hint">프로모션 쿠폰이 있으면 입력하세요.</div>
+        </div>
+        <div class="auth-error" id="onboard-error"></div>
+        <button type="submit" class="btn btn-primary">브랜드 생성</button>
+      </form>
+    </div>
+    <!-- 회계담당자: 브랜드 배정 대기 안내 -->
+    <div class="auth-card onboard-card" id="onboarding-accounting-block" style="display:none;">
+      <div class="auth-logo">
+        <h1>회계담당자 계정이 생성되었습니다</h1>
+        <p>플랫폼 관리자가 귀하를 담당 브랜드에 배정할 때까지 기다려 주세요.</p>
+      </div>
+      <div class="onboarding-wait-text">
+        <p>배정이 완료되면 로그인 시 <strong>지출</strong>·<strong>수익률</strong> 메뉴에서 해당 브랜드의 데이터를 조회하고, 지출 결의 이체 완료를 처리할 수 있습니다.</p>
+        <p class="text-muted mt-2">배정은 관리자 페이지 → 사용자 관리에서 역할을 「브랜드 회계관리자」로 지정하고 브랜드를 선택하면 됩니다.</p>
+      </div>
+      <div class="mt-4">
+        <button type="button" class="btn btn-outline" id="btn-onboarding-logout">로그아웃</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Dashboard Page ===== -->
+<div class="page" id="page-dashboard">
+  <div class="page-content">
+    <!-- Branch Selector (브랜드 관리자용) -->
+    <div class="branch-selector" id="branch-selector" style="display:none;">
+      <label id="branch-selector-label">지점 선택</label>
+      <select id="sel-branch-global">
+        <option value="__all__">전체 통합</option>
+      </select>
+      <div id="goal-achievement-month-wrap" class="goal-achievement-month-wrap" style="display:none;">
+        <label>월 선택</label>
+        <select id="goal-achievement-month-select" class="form-control"></select>
+      </div>
+      <div id="sales-period-wrap" class="sales-period-wrap" style="display:none;">
+        <label>보기</label>
+        <div class="sales-period-toggle-inline">
+          <button type="button" class="btn btn-outline btn-sm sales-period-btn" data-period="week">주별</button>
+          <button type="button" class="btn btn-outline btn-sm sales-period-btn active" data-period="month">월별</button>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-sm" id="btn-add-branch" data-role="brand">+ 지점 추가</button>
+    </div>
+
+    <!-- 보기 모드 (슈퍼 관리자 Bemove 시, 헤더 대신 콘텐츠 상단 표시) -->
+    <div id="bemove-view-as-bar" class="bemove-view-as-bar" style="display:none"></div>
+
+    <!-- Tab Content -->
+    <div id="tab-content">
+      <div class="empty-state">
+        <div class="icon">📊</div>
+        <h3>데이터를 불러오는 중...</h3>
+        <p>잠시만 기다려주세요.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Admin Page (Super Admin) ===== -->
+<div class="page" id="page-admin">
+  <div class="page-content">
+    <div class="admin-grid">
+      <div class="admin-sidebar">
+        <button class="admin-menu-item active" data-section="brands">브랜드 관리</button>
+        <button class="admin-menu-item" data-section="brand-managers">브랜드 관리자</button>
+        <button class="admin-menu-item" data-section="users">사용자 관리</button>
+        <button class="admin-menu-item" data-section="upload-audit">업로드 이력</button>
+        <button class="admin-menu-item" data-section="coupons">쿠폰 관리</button>
+        <button class="admin-menu-item" data-section="plans">플랜 관리</button>
+        <button class="admin-menu-item" data-section="payments">결제 현황</button>
+      </div>
+      <div id="admin-content">
+        <div class="card">
+          <h3>관리자 대시보드</h3>
+          <p class="text-muted">좌측 메뉴에서 관리할 항목을 선택하세요.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Settings Page ===== -->
+<div class="page" id="page-settings">
+  <div class="page-content">
+    <div class="card">
+      <h3>브랜드 설정</h3>
+      <div id="settings-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Scripts ===== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
+<script src="js/config.js?v=20260216zk"></script>
+<script src="js/supabase-client.js?v=20260219ai"></script>
+<script src="js/mode-store.js?v=20260226ms"></script>
+<script src="js/router.js?v=20260226ms"></script>
+<script src="js/data/gateway.js?v=20260226ms"></script>
+<script src="js/data/formula-query-service.js?v=20260303perf"></script>
+<script src="js/modules/formula/index.js?v=20260226ms"></script>
+<script src="js/modules/bemove/index.js?v=20260226ms"></script>
+<script src="js/app-shell.js?v=20260226ms"></script>
+<script src="js/auth.js?v=20260216zk"></script>
+<script src="js/dashboard-app.js?v=20260219auth"></script>
+<script src="js/admin-app.js?v=20260216zk"></script>
+<script>
+  // Initialize
+  document.addEventListener('DOMContentLoaded', function () {
+    FX.init();
+    if (typeof AppShell !== 'undefined' && AppShell.init) AppShell.init();
+    Auth.bindEvents();
+
+    // Check existing session
+    Auth.checkAuth();
+  });
+</script>
+
+</body>
+</html>
